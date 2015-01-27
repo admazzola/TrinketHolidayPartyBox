@@ -48,7 +48,7 @@ void Holiday::setAnimations(byte bitmask)
 
  int getWeekdayIndex(){
  
- return day()-1 /7;
+ return (day()-1) /7;
  }
 
 boolean Holiday::isActive()
