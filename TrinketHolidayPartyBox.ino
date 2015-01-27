@@ -15,6 +15,10 @@ const unsigned long DEFAULT_TIME = 1422315564; //time when doing the download..u
 const unsigned int YEARLY = 0;  //ints are for month and day of the month
 const unsigned int DAILY = 1;  //ints are for hour and min
 
+const unsigned int ELEVEN_ELEVEN = 0;
+
+
+
 
 
 // Which pin on the Arduino is connected to the NeoPixels?
@@ -60,16 +64,28 @@ void loop(){
   updatePixelsColors();
   
   pixels.show();//push colors to hardware
-  delay(200);
+  delay(50);
 }
 
+int holidayIndex;
 int pixelIndex;
+  int rgb[3];
 void updatePixelsColors(){
-  for(pixelIndex =0; pixelIndex < sizeof(holidays); pixelIndex++)
+  for(holidayIndex =0; holidayIndex < sizeof(holidays); holidayIndex++)
   {
-    
-    
-  
+    if(holidays[holidayIndex].isActive())
+      {
+          
+        for(pixelIndex =0; pixelIndex < NUMPIXELS; pixelIndex++){
+        
+          holidays[holidayIndex].getPixelColors(pixelIndex,rgb);
+          
+          pixels.setPixelColor(pixelIndex, pixels.Color(rgb[0],rgb[1],rgb[2]));
+          
+        }
+        
+        break; //ignore the other holidays so 0 has highest priority
+      }  
   }   
 }
 
@@ -111,9 +127,15 @@ void printDigits(int digits){
 
 
 void setupHolidays(){
-
+   uint32_t COLOR_RED = pixels.Color(200, 20, 20);
+  uint32_t COLOR_WHITE = pixels.Color(200, 200, 200);
+  uint32_t COLOR_BLUE = pixels.Color(20, 20, 200);
+  uint32_t COLOR_PURPLE = pixels.Color(20, 20, 200);
+  uint32_t COLOR_GREEN = pixels.Color(20, 20, 200);
+  uint32_t COLOR_BLACK = pixels.Color(20, 20, 200);
   
-  
+  holidays[ELEVEN_ELEVEN] = Holiday(DAILY,23,11,COLOR_PURPLE, COLOR_WHITE);
+  //holidays[JULY_FOUR] = new Holiday(DAILY,23,11,COLOR_RED,COLOR_WHITE,COLOR_BLUE);
   
   
 }  
