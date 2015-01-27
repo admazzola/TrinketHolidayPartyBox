@@ -11,34 +11,11 @@
 const unsigned long DEFAULT_TIME = 1422315564; //time when doing the download..unix time since epoch
 
 
-//these are the types of 'holidays'.  Daily or Yearly.
-const unsigned int DAILY = 0;  //ints are for hour and min
-const unsigned int YEARLY = 1;  //ints are for month and numeric day of the month (15th, 20th,..)
-const unsigned int YEARLY_DAYDEPENDANT = 2;  //christmas, thanksgiving... ints are for the month, the week of the month, and the day of the week (mon/tues...)
-const unsigned int EASTER_OFFSET = 3; //only 1 int, the offset from easter (0 is for easter)
 
-const unsigned int ELEVEN_ELEVEN_AM = 0;
-const unsigned int ELEVEN_ELEVEN_PM = 1;
-const unsigned int ANNIVERSARY = 2;
-const unsigned int BIRTHDAY = 3;
-const unsigned int JULY_FOUR = 4;
-const unsigned int CHRISTMAS = 5;
-const unsigned int NEWYEARS = 6;  
-const unsigned int THANKSGIVING = 7;  //fourth thursday of november
-const unsigned int HALLOWEEN = 8;
-const unsigned int LEIF_ERIKSON_DAY = 9;
-const unsigned int CINCO_DE_MAYO = 10;
-const unsigned int EASTER = 11;  //some crazy computation
-const unsigned int GOOD_FRIDAY = 12;
-
-const unsigned int SUNDAY = 0;
-const unsigned int MONDAY = 1;
-const unsigned int TUESDAY = 2;
-const unsigned int WEDNESDAY = 3;
-const unsigned int THURSDAY = 4;
-const unsigned int FRIDAY = 5;
-const unsigned int SATURDAY = 6;
-
+ const int MAX_ANIM_COUNT = 24;
+ int animationCounter = 0;
+ 
+ 
 // Which pin on the Arduino is connected to the NeoPixels?
 // On a Trinket or Gemma we suggest changing this to 1
 #define PIN            1
@@ -80,15 +57,32 @@ void setup()  {
 void loop(){    
 
   updatePixelsColors();
+   
   
   pixels.show();//push colors to hardware
+  
   delay(50);
+  
+  animationCounter++;
+  if(animationCounter > MAX_ANIM_COUNT)
+  {
+    animationCounter = 0;
+  }
 }
+
+int getAnimFrame()
+{
+  return animationCounter;
+}
+
 
 int holidayIndex;
 int pixelIndex;
   int rgb[3];
+  boolean noHolidays;
 void updatePixelsColors(){
+  noHolidays = true;
+  
   for(holidayIndex =0; holidayIndex < sizeof(holidays); holidayIndex++)
   {
     if(holidays[holidayIndex].isActive())
@@ -96,67 +90,46 @@ void updatePixelsColors(){
           
         for(pixelIndex =0; pixelIndex < NUMPIXELS; pixelIndex++){
         
-          holidays[holidayIndex].getPixelColors(pixelIndex,rgb);
+          uint32_t rgb = holidays[holidayIndex].getPixelColors(pixelIndex, getAnimFrame() );
           
-          pixels.setPixelColor(pixelIndex, pixels.Color(rgb[0],rgb[1],rgb[2]));
+          pixels.setPixelColor(pixelIndex,  rgb );
           
         }
-        
+        noHolidays = false;
         break; //ignore the other holidays so 0 has highest priority
       }  
   }   
+  
+  if(noHolidays)
+  {
+    updateDefaultClockAnimation();  
+  }
+  
+  
 }
 
 
-
-
-void digitalClockDisplay(){
-  // digital clock display of the time
-  Serial.print(hour());
-  printDigits(minute());
-  printDigits(second());
-  Serial.print(" ");
-  Serial.print(day());
-  Serial.print(" ");
-  Serial.print(month());
-  Serial.print(" ");
-  Serial.print(year()); 
-  Serial.println(); 
+void updateDefaultClockAnimation(){
+  for(pixelIndex =0; pixelIndex < NUMPIXELS; pixelIndex++){
+    pixels.setPixelColor(pixelIndex, pixels.Color(1,200,3));
+  }
 }
-
-void printDigits(int digits){
-  // utility function for digital clock display: prints preceding colon and leading 0
-  Serial.print(":");
-  if(digits < 10)
-    Serial.print('0');
-  Serial.print(digits);
-}
-
-
 
 //define animation patterns here
 
 
-//define holiday color patterns here
-
-
-
-//define which dates are which holidays
-
 
 void setupHolidays(){
-   uint32_t COLOR_RED = pixels.Color(200, 20, 20);
+  uint32_t COLOR_RED = pixels.Color(200, 40, 20);
   uint32_t COLOR_WHITE = pixels.Color(200, 200, 200);
-  uint32_t COLOR_BLUE = pixels.Color(20, 20, 200);
-  uint32_t COLOR_PINK = pixels.Color(200, 100, 100);
-  
-  
-  uint32_t COLOR_PURPLE = pixels.Color(20, 20, 200);
-  uint32_t COLOR_GREEN = pixels.Color(20, 20, 200);
-  uint32_t COLOR_BLACK = pixels.Color(20, 20, 200);
-  uint32_t COLOR_YELLOW = pixels.Color(20, 20, 200);
-  
-  uint32_t COLOR_BROWN = pixels.Color(200, 100, 100);
+  uint32_t COLOR_BLUE = pixels.Color(80, 80, 240);
+  uint32_t COLOR_PINK = pixels.Color(200, 150, 150); 
+  uint32_t COLOR_PURPLE = pixels.Color(170, 50, 170);
+  uint32_t COLOR_GREEN = pixels.Color(70, 200, 70);
+  uint32_t COLOR_BLACK = pixels.Color(0, 0, 0);
+  uint32_t COLOR_YELLOW = pixels.Color(200, 200, 20);
+  uint32_t COLOR_ORANGE = pixels.Color(230, 150, 30);
+  uint32_t COLOR_BROWN = pixels.Color(100, 70, 20);
   
   holidays[ELEVEN_ELEVEN_AM] = Holiday(DAILY,11,11); //11:11 am
   holidays[ELEVEN_ELEVEN_AM].addColor(COLOR_YELLOW);
@@ -191,7 +164,7 @@ void setupHolidays(){
   holidays[NEWYEARS].addColor(COLOR_WHITE);
   holidays[NEWYEARS].addColor(COLOR_YELLOW);
     
-  holidays[THANKSGIVING] = Holiday(YEARLY_DAYDEPENDANT,11,THURSDAY,4); //4th thursday of nov
+  holidays[THANKSGIVING] = Holiday(YEARLY_DAYDEPENDANT,11,THURSDAY,3); //thursday in the 4th week of nov  (int 3 is used since 0 is counted as the first week)
   holidays[THANKSGIVING].addColor(COLOR_RED);
   holidays[THANKSGIVING].addColor(COLOR_WHITE);
   holidays[THANKSGIVING].addColor(COLOR_BROWN);
@@ -221,20 +194,7 @@ void setupHolidays(){
   holidays[GOOD_FRIDAY].addColor(COLOR_PINK);
   holidays[GOOD_FRIDAY].addColor(COLOR_WHITE);
   holidays[GOOD_FRIDAY].addColor(COLOR_PURPLE);
-  
- 
-  const unsigned int ELEVEN_ELEVEN_PM = 1;
-const unsigned int ANNIVERSARY = 2;
-const unsigned int BIRTHDAY = 3;
-const unsigned int JULY_FOUR = 4;
-const unsigned int CHRISTMAS = 5;
-const unsigned int NEWYEARS = 6;  
-const unsigned int THANKSGIVING = 7;  //fourth thursday of november
-const unsigned int HALLOWEEN = 8;
-const unsigned int LEIF_ERIKSON_DAY = 9;
-const unsigned int CINCO_DE_MAYO = 10;
-const unsigned int EASTER = 11;  //some crazy computation
-const unsigned int GOOD_FRIDAY = 12;
+
   */
 }  
 

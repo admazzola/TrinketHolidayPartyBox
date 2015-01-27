@@ -1,4 +1,6 @@
-#include "Holiday.h"  
+#include "Holiday.h"   
+#include <Time.h>  
+
 
 Holiday::Holiday()
 {
@@ -36,29 +38,48 @@ void Holiday::addColor(uint32_t color)
 }
 
 
+
+ int getWeekdayIndex(){
+ 
+ return day()-1 /7;
+ }
+
 boolean Holiday::isActive()
 {
    if(enabled){
        //test day and stuff
+       if(timeGroup == DAILY){
+           if(hour()==MST && minute() == LST){
+             return true;
+           } 
+       }
+       if(timeGroup == YEARLY){
+           if(month()==MST && day() == LST){
+             return true;
+           } 
+       }
+        if(timeGroup == YEARLY_DAYDEPENDANT){
+           if(month()==MST && weekday() == LST && getWeekdayIndex() == (LST_index)  ){  
+             return true;
+           } 
+       }
        
-       return true;
+       
+       return false;
    }
    
     
    return false; 
 }
 
-void copy(int *a, int *b, int b_size) {
-     if(b_size == 0) return;    
-     *a = *b;
-     copy(++a, ++b, b_size-1);
-}
+ 
 
-void Holiday::getPixelColors(int pixelIndex, int rgb[3]) //needs to depend on animation type and color swatch
+
+uint32_t Holiday::getPixelColors(int pixelIndex, int animFrame) //needs to depend on animation type and color swatch
 {
-  rgb[0] = 0;
-  rgb[1] = 150;
-  rgb[2] = 0;
+  //need to add animations to this by not always using 0!
+  
+  return colorSwatches[0];
 
 
 }
