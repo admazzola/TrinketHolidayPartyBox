@@ -6,9 +6,14 @@
 
 #include <Time.h>  
 #include <Adafruit_NeoPixel.h>
-
+#include "Holiday.h"  
 
 const unsigned long DEFAULT_TIME = 1422315564; //time when doing the download..unix time since epoch
+
+
+//these are the types of 'holidays'.  Daily or Yearly.
+const unsigned int YEARLY = 0;  //ints are for month and day of the month
+const unsigned int DAILY = 1;  //ints are for hour and min
 
 
 
@@ -24,11 +29,17 @@ const unsigned long DEFAULT_TIME = 1422315564; //time when doing the download..u
 // example for more information on possible values.
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
-
+Holiday holidays[30];
 
 void setup()  {  
     
+    
+    
+    
   setTime(DEFAULT_TIME); 
+ 
+ 
+   setupHolidays();
  
    // This is for Trinket 5V 16MHz, you can remove these three lines if you are not using a Trinket
 #if defined (__AVR_ATtiny85__)
@@ -40,18 +51,30 @@ void setup()  {
     
 }
 
+
+
+
+
 void loop(){    
 
-
+  updatePixelsColors();
   
-  
-  
-  
-  
-  
-  pixels.show();
+  pixels.show();//push colors to hardware
   delay(200);
 }
+
+int pixelIndex;
+void updatePixelsColors(){
+  for(pixelIndex =0; pixelIndex < sizeof(holidays); pixelIndex++)
+  {
+    
+    
+  
+  }   
+}
+
+
+
 
 void digitalClockDisplay(){
   // digital clock display of the time
@@ -76,4 +99,24 @@ void printDigits(int digits){
 }
 
 
+
+//define animation patterns here
+
+
+//define holiday color patterns here
+
+
+
+//define which dates are which holidays
+
+
+void setupHolidays(){
+
+  
+  
+  
+  
+}  
+
+  
 
