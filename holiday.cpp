@@ -37,6 +37,13 @@ void Holiday::addColor(uint32_t color)
   numColors++;
 }
 
+void Holiday::setAnimations(byte bitmask)
+{
+  this->animationsMask = bitmask;  
+}
+
+
+
 
 
  int getWeekdayIndex(){
@@ -73,13 +80,58 @@ boolean Holiday::isActive()
 }
 
  
+int getRandomAnimation()
+{
+      int rand = random(300) % 8;
+
+    return pow(2,rand);
+}
+
 
 
 uint32_t Holiday::getPixelColors(int pixelIndex, int animFrame) //needs to depend on animation type and color swatch
 {
   //need to add animations to this by not always using 0!
   
-  return colorSwatches[0];
+  if(currentAnimation & animationsMask == 0 ) //if does no have the current animation
+  {
+      currentAnimation = getRandomAnimation();
+      return BLANK_COLOR;
+  }
+  
+  
+    //if there is no anim set yet, roll for a new one
+    if(currentAnimation == ANIM_NONE){
+      
+      currentAnimation = getRandomAnimation();
+      
+    }
+   
+   //if this anim cycle is over, roll for another (but only 15% chance)
+    if(animFrame = MAX_ANIM_COUNT){
+      int rand = random(100);
+      if(rand < 15)
+      {
+        currentAnimation = getRandomAnimation();
+      }
+   }
+  
+  
+  
+  
+  if(currentAnimation == ANIM_ANTS)
+  {
+    int cIndex = (animFrame + pixelIndex)%3;
+    return colorSwatches[cIndex];
+  }
+  
+  //need to check for the other animation styles like snake etc... will have to do some interesting functiosn to get fading to work
+  
+  
+    
+      
+  
+  return BLANK_COLOR;
 
 
 }

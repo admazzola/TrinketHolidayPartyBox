@@ -11,14 +11,12 @@
 const unsigned long DEFAULT_TIME = 1422315564; //time when doing the download..unix time since epoch
 
 
-
- const int MAX_ANIM_COUNT = 24;
  int animationCounter = 0;
  
  
 // Which pin on the Arduino is connected to the NeoPixels?
 // On a Trinket or Gemma we suggest changing this to 1
-#define PIN            1
+#define NEOPIXELPIN            1
 
 // How many NeoPixels are attached to the Arduino?
 #define NUMPIXELS      12
@@ -26,7 +24,7 @@ const unsigned long DEFAULT_TIME = 1422315564; //time when doing the download..u
 // When we setup the NeoPixel library, we tell it how many pixels, and which pin to use to send signals.
 // Note that for older NeoPixel strips you might need to change the third parameter--see the strandtest
 // example for more information on possible values.
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, NEOPIXELPIN, NEO_GRB + NEO_KHZ800);
 
 Holiday holidays[30];
 
@@ -109,10 +107,22 @@ void updatePixelsColors(){
 }
 
 
-void updateDefaultClockAnimation(){
+void updateDefaultClockAnimation(){ //add really coo stuff here, just based on sec, min, and hour!
+  
+  
+  
   for(pixelIndex =0; pixelIndex < NUMPIXELS; pixelIndex++){
+    
+    
     pixels.setPixelColor(pixelIndex, pixels.Color(1,200,3));
+    
+    
+    
   }
+  
+  
+  
+  
 }
 
 //define animation patterns here
@@ -134,55 +144,68 @@ void setupHolidays(){
   holidays[ELEVEN_ELEVEN_AM] = Holiday(DAILY,11,11); //11:11 am
   holidays[ELEVEN_ELEVEN_AM].addColor(COLOR_YELLOW);
   holidays[ELEVEN_ELEVEN_AM].addColor(COLOR_WHITE);
+  holidays[ELEVEN_ELEVEN_AM].addColor(COLOR_BLACK);  
+  holidays[ELEVEN_ELEVEN_AM].setAnimations( ANIM_ANTS | ANIM_SNAKE   );
     
   holidays[ELEVEN_ELEVEN_PM] = Holiday(DAILY,23,11); //11:11 pm
   holidays[ELEVEN_ELEVEN_PM].addColor(COLOR_PURPLE);
   holidays[ELEVEN_ELEVEN_PM].addColor(COLOR_WHITE);
+  holidays[ELEVEN_ELEVEN_PM].addColor(COLOR_BLACK);  
+  holidays[ELEVEN_ELEVEN_PM].setAnimations( ANIM_ANTS | ANIM_SNAKE   );
    
   holidays[ANNIVERSARY] = Holiday(YEARLY,11,11); //november 11th
   holidays[ANNIVERSARY].addColor(COLOR_GREEN);
   holidays[ANNIVERSARY].addColor(COLOR_WHITE);
   holidays[ANNIVERSARY].addColor(COLOR_PURPLE);
+  holidays[ANNIVERSARY].setAnimations( ANIM_ANTS | ANIM_SNAKE   );
     
   holidays[BIRTHDAY] = Holiday(YEARLY,12,16);
   holidays[BIRTHDAY].addColor(COLOR_PURPLE);
   holidays[BIRTHDAY].addColor(COLOR_WHITE);
   holidays[BIRTHDAY].addColor(COLOR_BLUE);
+  holidays[BIRTHDAY].setAnimations( ANIM_ANTS | ANIM_SNAKE   );
       
   holidays[JULY_FOUR] = Holiday(YEARLY,7,4);
   holidays[JULY_FOUR].addColor(COLOR_RED);
   holidays[JULY_FOUR].addColor(COLOR_WHITE);
   holidays[JULY_FOUR].addColor(COLOR_BLUE);
+  holidays[JULY_FOUR].setAnimations( ANIM_ANTS | ANIM_SNAKE   );
   
   holidays[CHRISTMAS] = Holiday(YEARLY,12,25);
   holidays[CHRISTMAS].addColor(COLOR_RED);
   holidays[CHRISTMAS].addColor(COLOR_WHITE);
   holidays[CHRISTMAS].addColor(COLOR_GREEN);
+  holidays[CHRISTMAS].setAnimations( ANIM_ANTS | ANIM_SNAKE   );
     
   holidays[NEWYEARS] = Holiday(YEARLY,1,1); 
   holidays[NEWYEARS].addColor(COLOR_RED);
   holidays[NEWYEARS].addColor(COLOR_WHITE);
   holidays[NEWYEARS].addColor(COLOR_YELLOW);
+  holidays[NEWYEARS].setAnimations( ANIM_ANTS | ANIM_SNAKE   );
     
   holidays[THANKSGIVING] = Holiday(YEARLY_DAYDEPENDANT,11,THURSDAY,3); //thursday in the 4th week of nov  (int 3 is used since 0 is counted as the first week)
   holidays[THANKSGIVING].addColor(COLOR_RED);
   holidays[THANKSGIVING].addColor(COLOR_WHITE);
   holidays[THANKSGIVING].addColor(COLOR_BROWN);
+  holidays[THANKSGIVING].setAnimations( ANIM_ANTS | ANIM_SNAKE   );
     
   holidays[HALLOWEEN] = Holiday(YEARLY,10,31); 
   holidays[HALLOWEEN].addColor(COLOR_RED);
   holidays[HALLOWEEN].addColor(COLOR_WHITE);
   holidays[HALLOWEEN].addColor(COLOR_YELLOW);
+  holidays[HALLOWEEN].setAnimations( ANIM_ANTS | ANIM_SNAKE   );
   
   holidays[LEIF_ERIKSON_DAY] = Holiday(YEARLY,10,9); 
   holidays[LEIF_ERIKSON_DAY].addColor(COLOR_BLUE);
   holidays[LEIF_ERIKSON_DAY].addColor(COLOR_PINK);
   holidays[LEIF_ERIKSON_DAY].addColor(COLOR_YELLOW);
+  holidays[LEIF_ERIKSON_DAY].setAnimations( ANIM_ANTS | ANIM_SNAKE   );
   
   holidays[CINCO_DE_MAYO] = Holiday(YEARLY,5,5); 
   holidays[CINCO_DE_MAYO].addColor(COLOR_RED);
   holidays[CINCO_DE_MAYO].addColor(COLOR_WHITE);
   holidays[CINCO_DE_MAYO].addColor(COLOR_GREEN);
+  holidays[CINCO_DE_MAYO].setAnimations( ANIM_ANTS | ANIM_SNAKE   );
   
    /*
   holidays[EASTER] = Holiday(EASTER_OFFSET,0,0); 
