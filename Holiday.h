@@ -11,6 +11,8 @@ class Holiday {
     int timeGroup;  //yearly or daily    
     int MST;  //most significant time.. either be the month or the hour (depends on timegroup)
     int LST;  //least signifiact time... either the day of the month or the minute (depends on timegroup)
+    int LST_index; //used to clarify more information about the LST
+    
     int numColors;
     int counter;  //animation counter
     uint32_t colorSwatches[3];
@@ -23,12 +25,12 @@ class Holiday {
     
     
   public:
-    Holiday(int timeGroup, int mst, int lst, uint32_t colorOne);
-    Holiday(int timeGroup, int mst, int lst, uint32_t colorOne, uint32_t colorTwo);
-    Holiday(int timeGroup, int mst, int lst, uint32_t colorOne, uint32_t colorTwo, uint32_t colorThree);
+    Holiday(int timeGroup, int mst, int lst);
+    Holiday(int timeGroup, int mst, int lst, int lst_index);
 
    Holiday();
     boolean isActive();              // add k to the end of the list
+    void addColor(uint32_t color);    
     void getPixelColors(int pixelIndex, int rgb[3]);
  
 };
