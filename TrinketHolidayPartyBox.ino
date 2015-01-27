@@ -1,8 +1,11 @@
 /* 
  * The trinket has maximum sketch size of 28,672 bytes
- * On Linux, you can use "date +T%s\n > /dev/ttyACM0" (UTC time zone)
+ * Time is received by a DS1307RTC chip
+ 
+On the trinket, pin 0 is SDA and pin 2 is SCL!  pin 1 will be for the LEDs data
  */  
  
+#include <DS1307RTC.h>  // a basic DS1307 library that returns time as a time_t
 
 #include <Time.h>  
 #include <Adafruit_NeoPixel.h>
@@ -29,13 +32,21 @@ Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, NEOPIXELPIN, NEO_GRB + N
 Holiday holidays[30];
 
 void setup()  {  
-    
-    
-    
-    
-  setTime(DEFAULT_TIME); 
- 
- 
+     
+  setTime(DEFAULT_TIME); //not needed
+  
+  
+  while(true)//keep trying to read the time after a new boot! Do not proceed until it is read
+  {
+    //read time from the RTC module
+    if (RTC.read(tm)) {   
+       setTime(tm); //is this the right format?
+       break;
+    } 
+    delay(50);
+  }
+   
+   
    setupHolidays();
  
    // This is for Trinket 5V 16MHz, you can remove these three lines if you are not using a Trinket
@@ -50,9 +61,10 @@ void setup()  {
 
 
 
+tmElements_t tm;
 
-
-void loop(){    
+void loop(){   
+ 
 
   updatePixelsColors();
    
