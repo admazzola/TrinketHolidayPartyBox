@@ -6,12 +6,13 @@ On the trinket, pin 0 is SDA and pin 2 is SCL!  pin 1 will be for the LEDs data
  */  
  
 #include <DS1307RTC.h>  // a basic DS1307 library that returns time as a time_t
+#include <Wire.h>  
 
 #include <Time.h>  
 #include <Adafruit_NeoPixel.h>
 #include "Holiday.h"  
 
-const unsigned long DEFAULT_TIME = 1422315564; //time when doing the download..unix time since epoch
+const unsigned long DEFAULT_TIME = 0; //time when doing the download..unix time since epoch
 
 
  int animationCounter = 0;
@@ -32,20 +33,14 @@ Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, NEOPIXELPIN, NEO_GRB + N
 Holiday holidays[30];
 
 void setup()  {  
+  
+
      
   setTime(DEFAULT_TIME); //not needed
   
-  
-  while(true)//keep trying to read the time after a new boot! Do not proceed until it is read
-  {
-    //read time from the RTC module
-    if (RTC.read(tm)) {   
-       setTime(tm); //is this the right format?
-       break;
-    } 
-    delay(50);
-  }
-   
+   setSyncProvider(RTC.get);   // the function to get the time from the RTC
+   setSyncInterval(10);//every 10 secs, sync with the RTC
+ 
    
    setupHolidays();
  
@@ -61,10 +56,8 @@ void setup()  {
 
 
 
-tmElements_t tm;
-
 void loop(){   
- 
+   clearAllPixels(); //necessary?
 
   updatePixelsColors();
    
@@ -91,6 +84,17 @@ int pixelIndex;
   int rgb[3];
   boolean noHolidays;
 void updatePixelsColors(){
+  
+  //show debug pattern if the time is not set properly
+  if(timeStatus() != timeSet)
+  {
+    debugBlink( pixels.Color(200,0,0));    
+    return;
+  }
+  
+  
+  
+  
   noHolidays = true;
   
   for(holidayIndex =0; holidayIndex < sizeof(holidays); holidayIndex++)
@@ -233,5 +237,17 @@ void setupHolidays(){
   */
 }  
 
-  
+void debugBlink(uint32_t debugColor)
+{
+   pixels.setPixelColor( getAnimFrame() , debugColor);
+}
 
+void clearAllPixels()
+{
+
+int i=0;
+for(i=0;i<NUMPIXELS;i++){
+   pixels.setPixelColor(i,  0);
+}
+
+}
